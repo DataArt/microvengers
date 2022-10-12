@@ -1,0 +1,700 @@
+{
+	"info": {
+		"_postman_id": "ff6b5e33-a89e-4d19-90fc-950f8776454e",
+		"name": "distributed_transaction",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "1002066"
+	},
+	"item": [
+		{
+			"name": "get_info",
+			"item": [
+				{
+					"name": "getOrder",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8080/api/v1/orders/{{transaction_id}}",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"v1",
+								"orders",
+								"{{transaction_id}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "get_customer_by_id",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8081/api/v1/customer/{{customer_id}}",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8081",
+							"path": [
+								"api",
+								"v1",
+								"customer",
+								"{{customer_id}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "get_payment_by_transaction_id",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8083/api/v1/payment/{{transaction_id}}",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8083",
+							"path": [
+								"api",
+								"v1",
+								"payment",
+								"{{transaction_id}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "get_inventory_by_transaction_id",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8082/api/v1/inventory/{{transaction_id}}",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8082",
+							"path": [
+								"api",
+								"v1",
+								"inventory",
+								"{{transaction_id}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "get_shipping_by_transaction_id",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8084/api/v1/shipping/{{transaction_id}}",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8084",
+							"path": [
+								"api",
+								"v1",
+								"shipping",
+								"{{transaction_id}}"
+							]
+						}
+					},
+					"response": []
+				}
+			],
+			"description": "Saga Get Info of Transaction API"
+		},
+		{
+			"name": "saga",
+			"item": [
+				{
+					"name": "command",
+					"item": [
+						{
+							"name": "payment",
+							"request": {
+								"method": "PUT",
+								"header": [
+									{
+										"key": "transactionId",
+										"value": "{{transaction_id}}",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"customerId\": {{customer_id}},\n    \"price\": \"{{price}}\"\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "http://localhost:8083/api/v1/payment",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "8083",
+									"path": [
+										"api",
+										"v1",
+										"payment"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "inventory",
+							"request": {
+								"method": "PUT",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									},
+									{
+										"key": "transactionId",
+										"value": "{{transaction_id}}",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"productId\": {{product_id}},\n    \"quantity\": 1\n}"
+								},
+								"url": {
+									"raw": "http://localhost:8082/api/v1/inventory",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "8082",
+									"path": [
+										"api",
+										"v1",
+										"inventory"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "shipping",
+							"request": {
+								"method": "PUT",
+								"header": [
+									{
+										"key": "transactionId",
+										"value": "{{transaction_id}}",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"countryCode\": \"{{country_code}}\"\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "http://localhost:8084/api/v1/shipping",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "8084",
+									"path": [
+										"api",
+										"v1",
+										"shipping"
+									]
+								}
+							},
+							"response": []
+						}
+					],
+					"description": "Saga Create Transaction API"
+				},
+				{
+					"name": "compensations",
+					"item": [
+						{
+							"name": "payment",
+							"request": {
+								"method": "DELETE",
+								"header": [],
+								"url": {
+									"raw": "http://localhost:8083/api/v1/payment/{{transaction_id}}",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "8083",
+									"path": [
+										"api",
+										"v1",
+										"payment",
+										"{{transaction_id}}"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "inventory",
+							"request": {
+								"method": "DELETE",
+								"header": [],
+								"url": {
+									"raw": "http://localhost:8082/api/v1/inventory/{{transaction_id}}",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "8082",
+									"path": [
+										"api",
+										"v1",
+										"inventory",
+										"{{transaction_id}}"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "shipping",
+							"request": {
+								"method": "DELETE",
+								"header": [],
+								"url": {
+									"raw": "http://localhost:8084/api/v1/shipping/{{transaction_id}}",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "8084",
+									"path": [
+										"api",
+										"v1",
+										"shipping",
+										"{{transaction_id}}"
+									]
+								}
+							},
+							"response": []
+						}
+					],
+					"description": "Saga Transaction Compensation API"
+				},
+				{
+					"name": "order",
+					"item": [
+						{
+							"name": "order",
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"customerId\": {{customer_id}},\n    \"productId\": {{product_id}},\n    \"quantity\": 1,\n    \"countryCode\": \"{{country_code}}\"\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "http://localhost:8080/api/v1/orders/saga",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "8080",
+									"path": [
+										"api",
+										"v1",
+										"orders",
+										"saga"
+									]
+								}
+							},
+							"response": []
+						}
+					],
+					"description": "Saga Apache Camel Transaction API"
+				}
+			]
+		},
+		{
+			"name": "2pc",
+			"item": [
+				{
+					"name": "prepare_phase",
+					"item": [
+						{
+							"name": "payment",
+							"request": {
+								"method": "PUT",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"customerId\": {{customer_id}},\n    \"price\": \"{{price}}\"\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "http://localhost:8083/api/v1/payment/prepare",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "8083",
+									"path": [
+										"api",
+										"v1",
+										"payment",
+										"prepare"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "shipping",
+							"request": {
+								"method": "PUT",
+								"header": [
+									{
+										"key": "",
+										"value": "",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"countryCode\": \"{{country_code}}\"\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "http://localhost:8084/api/v1/shipping/prepare",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "8084",
+									"path": [
+										"api",
+										"v1",
+										"shipping",
+										"prepare"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "inventory",
+							"request": {
+								"method": "PUT",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									},
+									{
+										"key": "",
+										"value": "",
+										"type": "text",
+										"disabled": true
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"productId\": {{product_id}},\n    \"quantity\": 1\n}"
+								},
+								"url": {
+									"raw": "http://localhost:8082/api/v1/inventory/prepare",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "8082",
+									"path": [
+										"api",
+										"v1",
+										"inventory",
+										"prepare"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "commit_phase",
+					"item": [
+						{
+							"name": "payment",
+							"request": {
+								"method": "PUT",
+								"header": [
+									{
+										"key": "transactionId",
+										"value": "{{transaction_id}}",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"customerId\": {{customer_id}},\n    \"price\": \"{{price}}\"\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "http://localhost:8083/api/v1/payment/commit/",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "8083",
+									"path": [
+										"api",
+										"v1",
+										"payment",
+										"commit",
+										""
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "inventory",
+							"request": {
+								"method": "PUT",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									},
+									{
+										"key": "transactionId",
+										"value": "{{transaction_id}}",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"productId\": {{product_id}},\n    \"quantity\": 1\n}"
+								},
+								"url": {
+									"raw": "http://localhost:8082/api/v1/inventory/commit",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "8082",
+									"path": [
+										"api",
+										"v1",
+										"inventory",
+										"commit"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "shipping",
+							"request": {
+								"method": "PUT",
+								"header": [
+									{
+										"key": "transactionId",
+										"value": "{{transaction_id}}",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"countryCode\": \"{{country_code}}\"\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "http://localhost:8084/api/v1/shipping/commit",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "8084",
+									"path": [
+										"api",
+										"v1",
+										"shipping",
+										"commit"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "rollback_phase",
+					"item": [
+						{
+							"name": "payment",
+							"request": {
+								"method": "DELETE",
+								"header": [],
+								"url": {
+									"raw": "http://localhost:8083/api/v1/payment/rollback/{{customer_id}}",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "8083",
+									"path": [
+										"api",
+										"v1",
+										"payment",
+										"rollback",
+										"{{customer_id}}"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "inventory",
+							"request": {
+								"method": "DELETE",
+								"header": [],
+								"url": {
+									"raw": "http://localhost:8082/api/v1/inventory/rollback/{{product_id}}",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "8082",
+									"path": [
+										"api",
+										"v1",
+										"inventory",
+										"rollback",
+										"{{product_id}}"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "shipping",
+							"request": {
+								"method": "DELETE",
+								"header": [],
+								"url": {
+									"raw": "http://localhost:8084/api/v1/shipping/rollback/{{country_code}}",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "8084",
+									"path": [
+										"api",
+										"v1",
+										"shipping",
+										"rollback",
+										"{{country_code}}"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "order",
+					"item": [
+						{
+							"name": "order",
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"customerId\": {{customer_id}},\n    \"productId\": {{product_id}},\n    \"quantity\": 1,\n    \"countryCode\": \"{{country_code}}\"\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "http://localhost:8080/api/v1/orders/2pc",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "8080",
+									"path": [
+										"api",
+										"v1",
+										"orders",
+										"2pc"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				}
+			]
+		}
+	],
+	"variable": [
+		{
+			"key": "transaction_id",
+			"value": "d4dd4113-c3ea-4468-8038-9ca4ef16c305"
+		}
+	]
+}
